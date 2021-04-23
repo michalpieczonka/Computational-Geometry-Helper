@@ -1,14 +1,27 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
+
 package GUI;
+
+import java.awt.Point;
 
 /**
  *
  * @author Michal
  */
-public class Edges {
+public class Edge {
     
+    Point [] vertices; //Tablica dla wierzcholkow bo krawedz sklada sie z poczatka i konca
+    
+    public Edge(){
+        this.vertices = new Point [2];
+    }
+    
+    public Edge (Point start, Point end) {
+        this.vertices = new Point [2];
+        vertices[0] = start;
+        vertices[1] = end;
+    }
+    
+    public Point[] getEdgeCords(){
+        return vertices;
+    }
 }

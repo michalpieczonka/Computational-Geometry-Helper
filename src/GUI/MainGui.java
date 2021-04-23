@@ -1,13 +1,12 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
+
 package GUI;
 
 import com.formdev.flatlaf.FlatDarkLaf;
 import java.awt.MouseInfo;
 import java.awt.Point;
+import java.util.ArrayList;
+import java.util.List;
+import javax.swing.ButtonGroup;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 
@@ -19,11 +18,17 @@ public class MainGui extends javax.swing.JFrame {
 
 StructuresContainer sct = new StructuresContainer(); //Klasa sluzaca do przechowywania wszystki informacji ktore zostana wprowadzone w trakcie dzialania programu
 graphPanell paintSurface = new graphPanell(sct); //Panel na ktorym przeprowadzana jest wizualizacja i wszystkie pozostale operacje
-    /**
-     * Creates new form MainGui
-     */
+ButtonGroup checkBoxesGroup = new ButtonGroup(); //Grupa przyciskow do tworzenia/dodawania nowych elementow geometrycznych - utworzona aby uniemozliwic na przyklad dodawanie linii w trakcie gdy wlaczone jest dodawnaie punktow
+int clickCounter =0; //Licznik pomocniczy stworzony bo to by liczyc kliki w powierzchnie i na ich pdostawie wyznaczac poczatek i koniec lini/tworzyc linie
+boolean startOk = false; //Przechowuje wynik sprawdzenia czy wybrany (jako poczatek liniI) punkt znajduje sie w zbiorze punktow narysowanych na powierzchni
+boolean endOk = false; //Przechowuje wynik sprawdzenia czy wybrany (jako koniec linii) punkt znajduje sie w zbiorze punktow narysowanych na powierzchni
+Point startEdgePoint; //Zmienna tymczasowa - przechowujaca chwilowy poczatek lini
+Point endEdgePoint; //Zmienna tymczasowa - przechowujaca chwilowy koniec linii
+
     public MainGui() {
         initComponents();
+        this.checkBoxesGroup.add(addingPointBox);
+        this.checkBoxesGroup.add(addingEdgeBox);
     }
 
     /**
@@ -48,6 +53,7 @@ graphPanell paintSurface = new graphPanell(sct); //Panel na ktorym przeprowadzan
         jButton1 = new javax.swing.JButton();
         jLabel6 = new javax.swing.JLabel();
         addingPointBox = new javax.swing.JCheckBox();
+        addingEdgeBox = new javax.swing.JCheckBox();
         rPanel = new javax.swing.JPanel();
         graphPanel = paintSurface;
         wizualizacjaL = new javax.swing.JLabel();
@@ -102,6 +108,8 @@ graphPanell paintSurface = new graphPanell(sct); //Panel na ktorym przeprowadzan
 
         addingPointBox.setText("Włącz dodawanie punktow");
 
+        addingEdgeBox.setText("Włącz dodawanie lini");
+
         javax.swing.GroupLayout operationsPanelLayout = new javax.swing.GroupLayout(operationsPanel);
         operationsPanel.setLayout(operationsPanelLayout);
         operationsPanelLayout.setHorizontalGroup(
@@ -117,6 +125,9 @@ graphPanell paintSurface = new graphPanell(sct); //Panel na ktorym przeprowadzan
             .addGroup(operationsPanelLayout.createSequentialGroup()
                 .addGap(24, 24, 24)
                 .addGroup(operationsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(operationsPanelLayout.createSequentialGroup()
+                        .addComponent(addingEdgeBox)
+                        .addGap(0, 0, Short.MAX_VALUE))
                     .addGroup(operationsPanelLayout.createSequentialGroup()
                         .addComponent(addingPointBox)
                         .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
@@ -162,7 +173,9 @@ graphPanell paintSurface = new graphPanell(sct); //Panel na ktorym przeprowadzan
                 .addComponent(jLabel6)
                 .addGap(18, 18, 18)
                 .addComponent(addingPointBox)
-                .addContainerGap(320, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(addingEdgeBox)
+                .addContainerGap(294, Short.MAX_VALUE))
         );
 
         jSplitPane1.setLeftComponent(operationsPanel);
@@ -238,15 +251,55 @@ graphPanell paintSurface = new graphPanell(sct); //Panel na ktorym przeprowadzan
     }//GEN-LAST:event_graphPanelMouseClicked
 
     private void graphPanelMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_graphPanelMousePressed
-        //Dodawanie punktow po kliknieciu w przestrzen odpowiedzialna za wizualizacje
+        
+       //Dodawanie punktow po kliknieciu w przestrzen odpowiedzialna za wizualizacje
        if (addingPointBox.isSelected()){
         Point p = MouseInfo.getPointerInfo().getLocation(); //Pobranie wspolrzednych punktu z obszaru panelu
         SwingUtilities.convertPointFromScreen(p, graphPanel); //Zrzutowanie na panel jesli ramka bylaby przesuwana,poniewaz zadne layouty nie sa wykorzystywane
         sct.Points.add(p);
         graphPanel.repaint();
        }
-            
-   
+       
+       //Dodawanie lini po klienciu w punkt istniejacy w przestrzeni odpowiedzialnej za wizualizacje 
+       //Dodatkowo aby 'ulatwic' klikanie +/- 10px tolerancji w kazda ze stron
+       if (addingEdgeBox.isSelected()){
+           clickCounter++;
+           if (clickCounter == 1){
+               startEdgePoint = evt.getPoint();
+               startOk = sct.isPointInSurface(startEdgePoint);
+           }
+           
+           if (clickCounter == 2){
+               if (startOk){
+                  endEdgePoint = evt.getPoint();
+                  endOk = sct.isPointInSurface(endEdgePoint);
+                  if (endOk){
+               Edge edgeTmp = new Edge(startEdgePoint, endEdgePoint);
+               sct.Edges.add(edgeTmp);
+               graphPanel.repaint();
+               clickCounter = 0;
+               startEdgePoint = null;
+               endEdgePoint = null;
+               endOk = false;
+               startOk = false;
+              //        System.out.println("Dodano");
+               }
+               else{
+                   startOk = false;
+                   startEdgePoint = null;
+               }
+              
+           }
+           
+       }
+           if (clickCounter >= 3){
+               clickCounter = 0;
+               startEdgePoint = null;
+               endEdgePoint = null;
+               endOk = false;
+               startOk = false;
+           }
+       }
     }//GEN-LAST:event_graphPanelMousePressed
 
     /**
@@ -290,6 +343,7 @@ graphPanell paintSurface = new graphPanell(sct); //Panel na ktorym przeprowadzan
         });
     }
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JCheckBox addingEdgeBox;
     private javax.swing.JCheckBox addingPointBox;
     private javax.swing.JPanel graphPanel;
     private javax.swing.JButton jButton1;

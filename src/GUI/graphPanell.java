@@ -24,12 +24,18 @@ public class graphPanell extends JPanel{
 		g2d.drawRect(10, 10, 380, 380);
 		// kolo
                 //dla lini to samo tylko dodac tolerancje+/- 20px i juz :)
-                //od razu odpalic gitrhuba
 		g2d.drawOval(10, 10, 380, 380);
                 
+                //Rysowanie pojedynczych punktow na przestrzeni wizualizacyjnej (graphPanelu)
                 for(Point p: sct.Points ){
                     g2d.drawLine(p.x, p.y, p.x, p.y);
-                }        
+                }
+                
+                //Rysowanie krawedzi na przestrzeni wizualizacyjnej (graphPanelu)
+                for(Edge p: sct.Edges ){                  
+                    g2d.drawLine(p.getEdgeCords()[0].x, p.getEdgeCords()[0].y, p.getEdgeCords()[1].x, p.getEdgeCords()[1].y);
+                }
+                
                
 	}
         
