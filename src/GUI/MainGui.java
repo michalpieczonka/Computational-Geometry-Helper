@@ -44,16 +44,16 @@ Point endEdgePoint; //Zmienna tymczasowa - przechowujaca chwilowy koniec linii
         operationsPanel = new javax.swing.JPanel();
         jScrollPane1 = new javax.swing.JScrollPane();
         jTable1 = new javax.swing.JTable();
-        jLabel2 = new javax.swing.JLabel();
-        jTextField1 = new javax.swing.JTextField();
-        jTextField2 = new javax.swing.JTextField();
-        jLabel3 = new javax.swing.JLabel();
-        jLabel4 = new javax.swing.JLabel();
-        jLabel5 = new javax.swing.JLabel();
-        jButton1 = new javax.swing.JButton();
-        jLabel6 = new javax.swing.JLabel();
+        polygonsLabel = new javax.swing.JLabel();
+        avaliableLabel = new javax.swing.JLabel();
         addingPointBox = new javax.swing.JCheckBox();
         addingEdgeBox = new javax.swing.JCheckBox();
+        addNewPolygon = new javax.swing.JButton();
+        crossingPointsButton = new javax.swing.JButton();
+        convexHullButton = new javax.swing.JButton();
+        randomPointsButton = new javax.swing.JButton();
+        triangleAreaButton = new javax.swing.JButton();
+        jButton1 = new javax.swing.JButton();
         rPanel = new javax.swing.JPanel();
         graphPanel = paintSurface;
         wizualizacjaL = new javax.swing.JLabel();
@@ -72,7 +72,7 @@ Point endEdgePoint; //Zmienna tymczasowa - przechowujaca chwilowy koniec linii
                 {null, null, null}
             },
             new String [] {
-                "ID Punktu", "X cords", "Y cords"
+                "ID Wielokata", "Liczba punktow", "Liczba linii"
             }
         ) {
             boolean[] canEdit = new boolean [] {
@@ -88,94 +88,111 @@ Point endEdgePoint; //Zmienna tymczasowa - przechowujaca chwilowy koniec linii
             jTable1.getColumnModel().getColumn(0).setResizable(false);
         }
 
-        jLabel2.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
-        jLabel2.setText("Wprowadzone punkty");
+        polygonsLabel.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
+        polygonsLabel.setText("Wprowadzone wielokaty");
 
-        jLabel3.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
-        jLabel3.setText("Dodaj punkt");
+        avaliableLabel.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
+        avaliableLabel.setText("Dostępne operacje");
 
-        jLabel4.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
-        jLabel4.setText("X: ");
-
-        jLabel5.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
-        jLabel5.setText("Y:");
-
-        jButton1.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
-        jButton1.setText("Zatwierdz");
-
-        jLabel6.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
-        jLabel6.setText("Dostępne operacje");
-
+        addingPointBox.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
         addingPointBox.setText("Włącz dodawanie punktow");
 
+        addingEdgeBox.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
         addingEdgeBox.setText("Włącz dodawanie lini");
+
+        addNewPolygon.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
+        addNewPolygon.setText("<html><center>Dodaj nowy<br />wielokąt</center></html>");
+        addNewPolygon.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                addNewPolygonActionPerformed(evt);
+            }
+        });
+
+        crossingPointsButton.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
+        crossingPointsButton.setText("<html><center>Wyznacz współrzędne<br />punktów przecięcia</center></html>");
+
+        convexHullButton.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
+        convexHullButton.setText("<html><center>Wyznacz <br />otoczkę wypukłą</center></html>");
+
+        randomPointsButton.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
+        randomPointsButton.setText("<html><center>Wygeneruj losowe<br />punkty</center></html>");
+
+        triangleAreaButton.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
+        triangleAreaButton.setText("<html><center>Oblicz pole<br />trójkąta</center></html>");
+        triangleAreaButton.setEnabled(false);
+
+        jButton1.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
+        jButton1.setText("jButton1");
+        jButton1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton1ActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout operationsPanelLayout = new javax.swing.GroupLayout(operationsPanel);
         operationsPanel.setLayout(operationsPanelLayout);
         operationsPanelLayout.setHorizontalGroup(
             operationsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, operationsPanelLayout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(jLabel6)
+                .addGroup(operationsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, operationsPanelLayout.createSequentialGroup()
+                        .addGap(24, 24, 24)
+                        .addGroup(operationsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(operationsPanelLayout.createSequentialGroup()
+                                .addGroup(operationsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(addingPointBox)
+                                    .addComponent(addingEdgeBox, javax.swing.GroupLayout.PREFERRED_SIZE, 233, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(randomPointsButton, javax.swing.GroupLayout.PREFERRED_SIZE, 141, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addGap(0, 0, Short.MAX_VALUE))
+                            .addGroup(operationsPanelLayout.createSequentialGroup()
+                                .addGroup(operationsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(crossingPointsButton, javax.swing.GroupLayout.PREFERRED_SIZE, 144, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(convexHullButton, javax.swing.GroupLayout.PREFERRED_SIZE, 144, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addGap(42, 42, 42)
+                                .addGroup(operationsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(triangleAreaButton, javax.swing.GroupLayout.PREFERRED_SIZE, 124, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 124, javax.swing.GroupLayout.PREFERRED_SIZE)))))
+                    .addGroup(operationsPanelLayout.createSequentialGroup()
+                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(avaliableLabel)))
                 .addGap(165, 165, 165))
             .addGroup(operationsPanelLayout.createSequentialGroup()
-                .addGap(68, 68, 68)
-                .addComponent(jLabel2)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-            .addGroup(operationsPanelLayout.createSequentialGroup()
                 .addGap(24, 24, 24)
-                .addGroup(operationsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(operationsPanelLayout.createSequentialGroup()
-                        .addComponent(addingEdgeBox)
-                        .addGap(0, 0, Short.MAX_VALUE))
-                    .addGroup(operationsPanelLayout.createSequentialGroup()
-                        .addComponent(addingPointBox)
-                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                    .addGroup(operationsPanelLayout.createSequentialGroup()
-                        .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 237, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(53, 82, Short.MAX_VALUE)
-                        .addGroup(operationsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, operationsPanelLayout.createSequentialGroup()
-                                .addComponent(jLabel5)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                .addComponent(jTextField2, javax.swing.GroupLayout.PREFERRED_SIZE, 71, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, operationsPanelLayout.createSequentialGroup()
-                                .addComponent(jLabel4)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, 71, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addComponent(jButton1, javax.swing.GroupLayout.Alignment.TRAILING)
-                            .addComponent(jLabel3, javax.swing.GroupLayout.Alignment.TRAILING))
-                        .addGap(62, 62, 62))))
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 330, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(addNewPolygon, javax.swing.GroupLayout.PREFERRED_SIZE, 104, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap())
+            .addGroup(operationsPanelLayout.createSequentialGroup()
+                .addGap(97, 97, 97)
+                .addComponent(polygonsLabel)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         operationsPanelLayout.setVerticalGroup(
             operationsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(operationsPanelLayout.createSequentialGroup()
                 .addGap(19, 19, 19)
-                .addComponent(jLabel2)
-                .addGroup(operationsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(operationsPanelLayout.createSequentialGroup()
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 131, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(operationsPanelLayout.createSequentialGroup()
-                        .addGap(7, 7, 7)
-                        .addComponent(jLabel3)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addGroup(operationsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jLabel4))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addGroup(operationsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(jTextField2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jLabel5))
-                        .addGap(18, 18, 18)
-                        .addComponent(jButton1)))
-                .addGap(46, 46, 46)
-                .addComponent(jLabel6)
+                .addComponent(polygonsLabel)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(operationsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(addNewPolygon, javax.swing.GroupLayout.DEFAULT_SIZE, 101, Short.MAX_VALUE)
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE))
+                .addGap(76, 76, 76)
+                .addComponent(avaliableLabel)
                 .addGap(18, 18, 18)
                 .addComponent(addingPointBox)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(addingEdgeBox)
-                .addContainerGap(294, Short.MAX_VALUE))
+                .addGap(56, 56, 56)
+                .addGroup(operationsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(triangleAreaButton, javax.swing.GroupLayout.PREFERRED_SIZE, 61, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(crossingPointsButton, javax.swing.GroupLayout.PREFERRED_SIZE, 61, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(18, 18, 18)
+                .addGroup(operationsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(convexHullButton, javax.swing.GroupLayout.PREFERRED_SIZE, 61, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 61, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(18, 18, 18)
+                .addComponent(randomPointsButton, javax.swing.GroupLayout.PREFERRED_SIZE, 61, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(19, Short.MAX_VALUE))
         );
 
         jSplitPane1.setLeftComponent(operationsPanel);
@@ -302,6 +319,14 @@ Point endEdgePoint; //Zmienna tymczasowa - przechowujaca chwilowy koniec linii
        }
     }//GEN-LAST:event_graphPanelMousePressed
 
+    private void addNewPolygonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addNewPolygonActionPerformed
+    
+    }//GEN-LAST:event_addNewPolygonActionPerformed
+
+    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+      
+    }//GEN-LAST:event_jButton1ActionPerformed
+
     /**
      * @param args the command line arguments
      */
@@ -343,22 +368,22 @@ Point endEdgePoint; //Zmienna tymczasowa - przechowujaca chwilowy koniec linii
         });
     }
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton addNewPolygon;
     private javax.swing.JCheckBox addingEdgeBox;
     private javax.swing.JCheckBox addingPointBox;
+    private javax.swing.JLabel avaliableLabel;
+    private javax.swing.JButton convexHullButton;
+    private javax.swing.JButton crossingPointsButton;
     private javax.swing.JPanel graphPanel;
     private javax.swing.JButton jButton1;
-    private javax.swing.JLabel jLabel2;
-    private javax.swing.JLabel jLabel3;
-    private javax.swing.JLabel jLabel4;
-    private javax.swing.JLabel jLabel5;
-    private javax.swing.JLabel jLabel6;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JSplitPane jSplitPane1;
     public static javax.swing.JTable jTable1;
-    private javax.swing.JTextField jTextField1;
-    private javax.swing.JTextField jTextField2;
     private javax.swing.JPanel operationsPanel;
+    private javax.swing.JLabel polygonsLabel;
     javax.swing.JPanel rPanel;
+    private javax.swing.JButton randomPointsButton;
+    private javax.swing.JButton triangleAreaButton;
     private javax.swing.JLabel wizualizacjaL;
     // End of variables declaration//GEN-END:variables
 }

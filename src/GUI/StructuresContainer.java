@@ -21,7 +21,7 @@ public StructuresContainer(){
 public boolean isPointInSurface(Point p){
     boolean contains = false;
         for (Point h: Points){
-          if (Math.abs( h.x - p.x ) <= 10 && Math.abs( h.y - p.y ) <= 10){ //Sprawdzenie z tolerancja czy dany punkt jest na liscie (10 px tolerancji aby ulatwic klikanie i tworzenie krawedzi)
+          if (Math.abs( h.x - p.x ) <= 9 && Math.abs( h.y - p.y ) <= 9){ //Sprawdzenie z tolerancja czy dany punkt jest na liscie (10 px tolerancji aby ulatwic klikanie i tworzenie krawedzi)
               contains = true;
               break;
           }
