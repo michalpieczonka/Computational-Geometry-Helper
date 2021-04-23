@@ -33,7 +33,7 @@ public class graphPanell extends JPanel{
                  //pogrubienie czcionki opisujacej punkt
                 
                 //Rysowanie pojedynczych punktow na przestrzeni wizualizacyjnej (graphPanelu)
-                for(Point p: sct.Points ){
+                for(Point p: sct.points ){
                     cords = "("+p.x+" , "+p.y+")";
                     g2d.drawString(cords, p.x, p.y-12); //Opis punktu (x,y)
                    // g2d.drawLine(p.x, p.y, p.x, p.y); 
@@ -43,16 +43,13 @@ public class graphPanell extends JPanel{
                 g2d.setStroke(boldedLine);
                 
                 //Rysowanie krawedzi na przestrzeni wizualizacyjnej (graphPanelu)
-                for(Edge p: sct.Edges ){                  
+                for(Edge p: sct.edges ){                  
                     g2d.drawLine(p.getEdgeCords()[0].x, p.getEdgeCords()[0].y, p.getEdgeCords()[1].x, p.getEdgeCords()[1].y);
                 }
                 
                
 	}
         
-        public void addPoint(){     
-            repaint();
-        }
         
         
  }        

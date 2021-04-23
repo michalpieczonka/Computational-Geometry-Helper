@@ -4,11 +4,15 @@ package GUI;
 import com.formdev.flatlaf.FlatDarkLaf;
 import java.awt.MouseInfo;
 import java.awt.Point;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.List;
 import javax.swing.ButtonGroup;
+import javax.swing.JTable;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
+import javax.swing.table.DefaultTableModel;
 
 /**
  *
@@ -24,11 +28,29 @@ boolean startOk = false; //Przechowuje wynik sprawdzenia czy wybrany (jako pocza
 boolean endOk = false; //Przechowuje wynik sprawdzenia czy wybrany (jako koniec linii) punkt znajduje sie w zbiorze punktow narysowanych na powierzchni
 Point startEdgePoint; //Zmienna tymczasowa - przechowujaca chwilowy poczatek lini
 Point endEdgePoint; //Zmienna tymczasowa - przechowujaca chwilowy koniec linii
+Polygon selectedPolygon; //Zmienna 'tymczasowa' przechowujaca wszystkie informacje o wielokacie
+int rowWithSelectedPolygon = -1;  //Zmienna pomocnicza - odpowiedzialna za pobranie wyboru z tabeli wielokatow. Na wybranym beda wykonywane pozniejsze wszystkie operacje
+String polygonName; //Nazwa wielokata
 
     public MainGui() {
         initComponents();
         this.checkBoxesGroup.add(addingPointBox);
         this.checkBoxesGroup.add(addingEdgeBox);
+        //selectedPolygon = new Polygon();
+       // sct.polygons.add(selectedPolygon);
+        createPolygonsTable();
+        
+        
+            
+    polygonsTable.addMouseListener(new MouseAdapter() {
+    public void mouseClicked(MouseEvent e) {
+      if (e.getClickCount() == 1) {
+       //JTable target = (JTable)e.getSource();
+       //int row = target.getSelectedRow();
+       selectedPolygon = sct.polygons.get(polygonsTable.convertRowIndexToModel(rowWithSelectedPolygon));
+      }
+    }
+});
     }
 
     /**
@@ -43,7 +65,7 @@ Point endEdgePoint; //Zmienna tymczasowa - przechowujaca chwilowy koniec linii
         jSplitPane1 = new javax.swing.JSplitPane();
         operationsPanel = new javax.swing.JPanel();
         jScrollPane1 = new javax.swing.JScrollPane();
-        jTable1 = new javax.swing.JTable();
+        polygonsTable = new javax.swing.JTable();
         polygonsLabel = new javax.swing.JLabel();
         avaliableLabel = new javax.swing.JLabel();
         addingPointBox = new javax.swing.JCheckBox();
@@ -64,7 +86,7 @@ Point endEdgePoint; //Zmienna tymczasowa - przechowujaca chwilowy koniec linii
         jSplitPane1.setDividerLocation(500);
         jSplitPane1.setDividerSize(0);
 
-        jTable1.setModel(new javax.swing.table.DefaultTableModel(
+        polygonsTable.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
                 {null, null, null},
                 {null, null, null},
@@ -83,9 +105,9 @@ Point endEdgePoint; //Zmienna tymczasowa - przechowujaca chwilowy koniec linii
                 return canEdit [columnIndex];
             }
         });
-        jScrollPane1.setViewportView(jTable1);
-        if (jTable1.getColumnModel().getColumnCount() > 0) {
-            jTable1.getColumnModel().getColumn(0).setResizable(false);
+        jScrollPane1.setViewportView(polygonsTable);
+        if (polygonsTable.getColumnModel().getColumnCount() > 0) {
+            polygonsTable.getColumnModel().getColumn(0).setResizable(false);
         }
 
         polygonsLabel.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
@@ -116,6 +138,11 @@ Point endEdgePoint; //Zmienna tymczasowa - przechowujaca chwilowy koniec linii
 
         randomPointsButton.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
         randomPointsButton.setText("<html><center>Wygeneruj losowe<br />punkty</center></html>");
+        randomPointsButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                randomPointsButtonActionPerformed(evt);
+            }
+        });
 
         triangleAreaButton.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
         triangleAreaButton.setText("<html><center>Oblicz pole<br />trójkąta</center></html>");
@@ -138,12 +165,9 @@ Point endEdgePoint; //Zmienna tymczasowa - przechowujaca chwilowy koniec linii
                     .addGroup(javax.swing.GroupLayout.Alignment.LEADING, operationsPanelLayout.createSequentialGroup()
                         .addGap(24, 24, 24)
                         .addGroup(operationsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(operationsPanelLayout.createSequentialGroup()
-                                .addGroup(operationsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(addingPointBox)
-                                    .addComponent(addingEdgeBox, javax.swing.GroupLayout.PREFERRED_SIZE, 233, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addComponent(randomPointsButton, javax.swing.GroupLayout.PREFERRED_SIZE, 141, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                .addGap(0, 0, Short.MAX_VALUE))
+                            .addComponent(addingPointBox)
+                            .addComponent(addingEdgeBox, javax.swing.GroupLayout.PREFERRED_SIZE, 233, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(randomPointsButton, javax.swing.GroupLayout.PREFERRED_SIZE, 141, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addGroup(operationsPanelLayout.createSequentialGroup()
                                 .addGroup(operationsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                     .addComponent(crossingPointsButton, javax.swing.GroupLayout.PREFERRED_SIZE, 144, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -151,7 +175,8 @@ Point endEdgePoint; //Zmienna tymczasowa - przechowujaca chwilowy koniec linii
                                 .addGap(42, 42, 42)
                                 .addGroup(operationsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                     .addComponent(triangleAreaButton, javax.swing.GroupLayout.PREFERRED_SIZE, 124, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 124, javax.swing.GroupLayout.PREFERRED_SIZE)))))
+                                    .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 124, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                        .addGap(0, 0, Short.MAX_VALUE))
                     .addGroup(operationsPanelLayout.createSequentialGroup()
                         .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addComponent(avaliableLabel)))
@@ -273,7 +298,7 @@ Point endEdgePoint; //Zmienna tymczasowa - przechowujaca chwilowy koniec linii
        if (addingPointBox.isSelected()){
         Point p = MouseInfo.getPointerInfo().getLocation(); //Pobranie wspolrzednych punktu z obszaru panelu
         SwingUtilities.convertPointFromScreen(p, graphPanel); //Zrzutowanie na panel jesli ramka bylaby przesuwana,poniewaz zadne layouty nie sa wykorzystywane
-        sct.Points.add(p);
+        sct.points.add(p);
         graphPanel.repaint();
        }
        
@@ -292,7 +317,7 @@ Point endEdgePoint; //Zmienna tymczasowa - przechowujaca chwilowy koniec linii
                   endOk = sct.isPointInSurface(endEdgePoint);
                   if (endOk){
                Edge edgeTmp = new Edge(startEdgePoint, endEdgePoint);
-               sct.Edges.add(edgeTmp);
+               sct.edges.add(edgeTmp);
                graphPanel.repaint();
                clickCounter = 0;
                startEdgePoint = null;
@@ -300,6 +325,7 @@ Point endEdgePoint; //Zmienna tymczasowa - przechowujaca chwilowy koniec linii
                endOk = false;
                startOk = false;
               //        System.out.println("Dodano");
+              resetPolygonsTable();
                }
                else{
                    startOk = false;
@@ -320,13 +346,25 @@ Point endEdgePoint; //Zmienna tymczasowa - przechowujaca chwilowy koniec linii
     }//GEN-LAST:event_graphPanelMousePressed
 
     private void addNewPolygonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addNewPolygonActionPerformed
-    
+           Polygon p = new Polygon();
+           sct.polygons.add(p);
+           resetPolygonsTable();
     }//GEN-LAST:event_addNewPolygonActionPerformed
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
       
     }//GEN-LAST:event_jButton1ActionPerformed
 
+    private void randomPointsButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_randomPointsButtonActionPerformed
+        Point[] randomPoints = sct.algorithms.generateRandomPoints(10);
+        for (int i=0; i< randomPoints.length; i++){
+           // sct.points.add(randomPoints[i]);
+           System.out.println(randomPoints[i].x);
+        }
+        graphPanel.repaint();
+    }//GEN-LAST:event_randomPointsButtonActionPerformed
+
+    
     /**
      * @param args the command line arguments
      */
@@ -378,12 +416,48 @@ Point endEdgePoint; //Zmienna tymczasowa - przechowujaca chwilowy koniec linii
     private javax.swing.JButton jButton1;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JSplitPane jSplitPane1;
-    public static javax.swing.JTable jTable1;
     private javax.swing.JPanel operationsPanel;
     private javax.swing.JLabel polygonsLabel;
+    public static javax.swing.JTable polygonsTable;
     javax.swing.JPanel rPanel;
     private javax.swing.JButton randomPointsButton;
     private javax.swing.JButton triangleAreaButton;
     private javax.swing.JLabel wizualizacjaL;
     // End of variables declaration//GEN-END:variables
+
+    //Metoda pomocnicza odpowiedzialna za tworzenie widoku wielokatow w tabeli
+    void createPolygonsTable(){
+        String[] cols = {"Nazwa wielokata", "Liczba wierzcholkow", "Liczba krawedzi"};
+        DefaultTableModel polygonsTableDefModel = new DefaultTableModel(cols,0){
+            @Override
+            public boolean isCellEditable(int row, int column) {
+                return false;
+            }
+        };
+        polygonsTable.setModel(polygonsTableDefModel);
+        
+        for (int i=0; i<sct.polygons.size(); i++){
+            int numberOfVertices = sct.polygons.get(i).points.size();
+            String polygonName;
+            if (numberOfVertices == 3)
+                polygonName = "Trojkat";
+            else
+                polygonName = "Wielokat "+i;
+            int numberOfEdges = sct.polygons.get(i).edges.size();
+            
+            Object[] data = {polygonName,numberOfVertices,numberOfEdges};
+            polygonsTableDefModel.addRow(data);           
+        }       
+    }
+    
+    //Metoda odpowiedzialna za dokonywanie odswiezenia tabeli w przypadku wykonania jakiejkolwiek zmiany w tabeli typu dodanie punktu albo linii
+    void resetPolygonsTable(){
+        DefaultTableModel model = (DefaultTableModel) polygonsTable.getModel();
+        model.setRowCount(0); //reset
+        createPolygonsTable(); //ponowne utworzenie
+    }
+
+    
+
+
 }
