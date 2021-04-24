@@ -36,8 +36,8 @@ public class graphPanell extends JPanel{
                 for(Point p: sct.points ){
                     cords = "("+p.x+" , "+p.y+")";
                     g2d.drawString(cords, p.x, p.y-12); //Opis punktu (x,y)
-                   // g2d.drawLine(p.x, p.y, p.x, p.y); 
-                    g2d.fillOval(p.x, p.y, pointBold, pointBold); //Zamiast wykorzystywac drawLine do rysowania punktu wykorzystuje fillOval - tylko po to,aby punkt byl lepiej widoczny 
+                    g2d.drawLine(p.x, p.y, p.x, p.y); 
+                   // g2d.fillOval(p.x, p.y, pointBold, pointBold); //Zamiast wykorzystywac drawLine do rysowania punktu wykorzystuje fillOval - tylko po to,aby punkt byl lepiej widoczny 
                 }
                 g2d.setFont(defaultFont);
                 g2d.setStroke(boldedLine);

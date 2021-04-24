@@ -307,40 +307,37 @@ String polygonName; //Nazwa wielokata
        if (addingEdgeBox.isSelected()){
            clickCounter++;
            if (clickCounter == 1){
-               startEdgePoint = evt.getPoint();
-               startOk = sct.isPointInSurface(startEdgePoint);
+               Point tmpStartPoint = evt.getPoint(); //Pobranie punktu startu po kliknieciu w przestrzen
+               startEdgePoint = sct.isPointInSurface(tmpStartPoint); //Sprawdzenie czy dany punkt istnieje na liscie jesli tak to bedzie przypisany do aktualknego startEdgePointu 
+                                                                     //w przeciwnym razie bedzie nulem
            }
            
            if (clickCounter == 2){
-               if (startOk){
-                  endEdgePoint = evt.getPoint();
-                  endOk = sct.isPointInSurface(endEdgePoint);
-                  if (endOk){
+               if (startEdgePoint !=null){  //Jesli punkt startowy zostal wybrany to
+                  Point tmpEndPoint = evt.getPoint(); //Pobranie punktu konca po kliknieciu drugi raz w przestrzen
+                  endEdgePoint = sct.isPointInSurface(tmpEndPoint); //Sprawdzenie czy dany punkt istnieje na liscie. jesli tak to bedzie przypisany do aktualnego endEdgePointa
+                  if (endEdgePoint !=null && endEdgePoint != startEdgePoint){ //Jak jest koniec to poczatek rowniez musi byc wiec mozna utworzyc krawedz i koniec nie moze byc taki sam jak poczatek
                Edge edgeTmp = new Edge(startEdgePoint, endEdgePoint);
                sct.edges.add(edgeTmp);
-               graphPanel.repaint();
-               clickCounter = 0;
+                      System.out.println("Linia dodana");
+               graphPanel.repaint(); //refresh
+               clickCounter = 0; //reset parametrow
                startEdgePoint = null;
                endEdgePoint = null;
-               endOk = false;
-               startOk = false;
-              //        System.out.println("Dodano");
               resetPolygonsTable();
                }
                else{
-                   startOk = false;
                    startEdgePoint = null;
+                   clickCounter = 0;
                }
               
            }
            
        }
-           if (clickCounter >= 3){
+           if (clickCounter >= 3){ //Jesli sie nie udalo za pierwszym razem stworzyc krawedzi to reset parameterow 
                clickCounter = 0;
                startEdgePoint = null;
                endEdgePoint = null;
-               endOk = false;
-               startOk = false;
            }
        }
     }//GEN-LAST:event_graphPanelMousePressed
