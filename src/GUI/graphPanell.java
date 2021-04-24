@@ -27,12 +27,28 @@ public class graphPanell extends JPanel{
 	protected void paintComponent(Graphics g) {
 		super.paintComponent(g);
 		Graphics2D g2d = (Graphics2D) g;
-
                  g2d.setColor(pointColor);
                  g2d.setFont(boldedFont);
                  //pogrubienie czcionki opisujacej punkt
-                
-                //Rysowanie pojedynczych punktow na przestrzeni wizualizacyjnej (graphPanelu)
+                 
+          if (sct.convexHullEnabled == true){
+              Point prev = null; //Punkt pomocniczy, potrzebny do rysowania lini, poczatkowo jest nullem, a potem przy kazdej iteracji
+                                //przez liste punktow stanowiacych otoczke wypukla jest ustawiany na ten juz "przeiterowany".
+              Point firstPoint = sct.convexHullResult.get(0); //Pomocniczy punkt, bedzie
+                    for (Point p: sct.convexHullResult){
+                    cords = "("+p.x+" , "+p.y+")";
+                    g2d.drawString(cords, p.x, p.y-12); //Opis punktu (x,y)
+                    g2d.drawLine(p.x, p.y, p.x, p.y);  //narysowanie punktow
+                    if (prev !=null){ //Jesli nie jest to pierwsza iteracja to:
+                        g2d.drawLine(prev.x, prev.y, p.x, p.y);
+                    }
+                    prev = p;   //Ustawienie aktualnego poprzednika do nastepnej iteracji                 
+                  }
+                g2d.drawLine(firstPoint.x,firstPoint.y,prev.x,prev.y); //Dorysowanie brakujacej lini pomiedzy punktem poczatkowym, a punktem ostatnim
+                sct.setConvexHullDisabled(); //Wylaczenie otoczki wypuklej po narysowaniu aby umozliwic "rysowanie" kolejnych punktow
+                }
+          else{
+               //Rysowanie pojedynczych punktow na przestrzeni wizualizacyjnej (graphPanelu)
                 for(Point p: sct.points ){
                     cords = "("+p.x+" , "+p.y+")";
                     g2d.drawString(cords, p.x, p.y-12); //Opis punktu (x,y)
@@ -46,6 +62,10 @@ public class graphPanell extends JPanel{
                 for(Edge p: sct.edges ){                  
                     g2d.drawLine(p.getEdgeCords()[0].x, p.getEdgeCords()[0].y, p.getEdgeCords()[1].x, p.getEdgeCords()[1].y);
                 }
+          }
+
+                
+
                 
                
 	}

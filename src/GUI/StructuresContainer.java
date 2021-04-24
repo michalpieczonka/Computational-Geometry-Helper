@@ -10,12 +10,15 @@ public class StructuresContainer {
 List <Point> points; //Lista do przechowywania punktow  
 List <Edge> edges; //Lista do przechowywania krawedzi
 List <Polygon> polygons;
+List <Point> convexHullResult;
+boolean convexHullEnabled = false;
 Algorithms algorithms = new Algorithms();
 
 public StructuresContainer(){
     this.points = new ArrayList<>();
     this.edges = new ArrayList<>();
     this.polygons = new ArrayList<>();
+    this.convexHullResult = new ArrayList<>();
 }
 
 //Metoda pomocnicza - majaca sprawdzic czy dany punkt w przestrzeni(ustalony poprzez klikniecie w przestrzen) znajduje sie 
@@ -42,5 +45,15 @@ public Point isPointInSurface(Point p){
     }
         return foundedPoint;
 }
+
+//Uruchomienie otoczki wypuklej
+ public void setConvexHullEnabled (){
+     this.convexHullEnabled = true;
+ }
+ 
+ //Wylaczenie otoczki wypuklej
+  public void setConvexHullDisabled (){
+     this.convexHullEnabled = false;
+ }
 
 }
