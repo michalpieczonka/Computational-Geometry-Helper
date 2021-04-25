@@ -9,6 +9,7 @@ import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.List;
 import javax.swing.ButtonGroup;
+import javax.swing.JOptionPane;
 import javax.swing.JTable;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
@@ -30,6 +31,9 @@ Point startEdgePoint; //Zmienna tymczasowa - przechowujaca chwilowy poczatek lin
 Point endEdgePoint; //Zmienna tymczasowa - przechowujaca chwilowy koniec linii
 Polygon selectedPolygon; //Zmienna 'tymczasowa' przechowujaca wszystkie informacje o wielokacie
 int rowWithSelectedPolygon = -1;  //Zmienna pomocnicza - odpowiedzialna za pobranie wyboru z tabeli wielokatow. Na wybranym beda wykonywane pozniejsze wszystkie operacje
+//int selectedSingleLine = -1; //Zmienna pomocnicza - odpowiedzialna za pobranie wyboru z tabeli lini pojedynczego rekordu (lini), na ktorej beda wykonywane pozniejsze operacje
+int []selectedLines; //Zmienna pomocnicza - odpowiedzialna za pobranie wyboru linii z tabeli linii(linesTable) , na ktorych beda wykonywane dalsze operacje
+int []selectedPoints; //Zmienna pomocnicza - odpowiedzialna za pobranie wyboru z tabeli punktow(pointsTable), na ktorych beda wykonywane dalsze operacje
 
     public MainGui() {
         initComponents();
@@ -68,6 +72,8 @@ int rowWithSelectedPolygon = -1;  //Zmienna pomocnicza - odpowiedzialna za pobra
         jScrollPane2 = new javax.swing.JScrollPane();
         linesTable = new javax.swing.JTable();
         jLabel2 = new javax.swing.JLabel();
+        lineEquationButton = new javax.swing.JButton();
+        clearAllButton = new javax.swing.JButton();
         rPanel = new javax.swing.JPanel();
         graphPanel = paintSurface;
         wizualizacjaL = new javax.swing.JLabel();
@@ -92,6 +98,15 @@ int rowWithSelectedPolygon = -1;  //Zmienna pomocnicza - odpowiedzialna za pobra
         if (pointsTable.getColumnModel().getColumnCount() > 0) {
             pointsTable.getColumnModel().getColumn(0).setResizable(false);
         }
+        pointsTable.addMouseListener(new MouseAdapter(){
+            public void mouseClicked(MouseEvent e){
+                if (e.getClickCount() == 1){
+                    JTable target = (JTable)e.getSource();
+                    int[] selectedRows = target.getSelectedRows();
+                    selectedPoints = selectedRows;
+                }
+            }
+        });
 
         polygonsLabel.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
         polygonsLabel.setText("Dane wielokata");
@@ -106,7 +121,12 @@ int rowWithSelectedPolygon = -1;  //Zmienna pomocnicza - odpowiedzialna za pobra
         addingEdgeBox.setText("Włącz dodawanie lini");
 
         crossingPointsButton.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
-        crossingPointsButton.setText("<html><center>Wyznacz współrzędne<br />punktów przecięcia</center></html>");
+        crossingPointsButton.setText("<html><center>Wyznacz współrzędne<br />punktów przecięcia <br /> wybranych 2 linii</center></html>");
+        crossingPointsButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                crossingPointsButtonActionPerformed(evt);
+            }
+        });
 
         convexHullButton.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
         convexHullButton.setText("<html><center>Wyznacz <br />otoczkę wypukłą</center></html>");
@@ -125,8 +145,12 @@ int rowWithSelectedPolygon = -1;  //Zmienna pomocnicza - odpowiedzialna za pobra
         });
 
         triangleAreaButton.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
-        triangleAreaButton.setText("<html><center>Oblicz pole<br />trójkąta</center></html>");
-        triangleAreaButton.setEnabled(false);
+        triangleAreaButton.setText("<html><center>Oblicz pole trójkąta<br />złożonego z <br /> 3 wybranych punktow</center></html>");
+        triangleAreaButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                triangleAreaButtonActionPerformed(evt);
+            }
+        });
 
         jButton1.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
         jButton1.setText("Odśwież ekran");
@@ -151,9 +175,36 @@ int rowWithSelectedPolygon = -1;  //Zmienna pomocnicza - odpowiedzialna za pobra
         if (linesTable.getColumnModel().getColumnCount() > 0) {
             linesTable.getColumnModel().getColumn(0).setResizable(false);
         }
+        linesTable.addMouseListener(new MouseAdapter(){
+            public void mouseClicked(MouseEvent e){
+                if (e.getClickCount() == 1){
+                    JTable target = (JTable)e.getSource();
+                    int[] selectedRows = target.getSelectedRows();
+                    selectedLines = selectedRows;
+                    // int row = target.getSelectedRow();
+                    // selectedSingleLine = row;
+                }
+            }
+        });
 
         jLabel2.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
         jLabel2.setText("Punkty");
+
+        lineEquationButton.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
+        lineEquationButton.setText("<html><center>Wyznacz równanie<br />wybranej linii</center></html>");
+        lineEquationButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                lineEquationButtonActionPerformed(evt);
+            }
+        });
+
+        clearAllButton.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
+        clearAllButton.setText("Wyczyść");
+        clearAllButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                clearAllButtonActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout operationsPanelLayout = new javax.swing.GroupLayout(operationsPanel);
         operationsPanel.setLayout(operationsPanelLayout);
@@ -166,28 +217,39 @@ int rowWithSelectedPolygon = -1;  //Zmienna pomocnicza - odpowiedzialna za pobra
             .addGroup(operationsPanelLayout.createSequentialGroup()
                 .addGap(10, 10, 10)
                 .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 264, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 10, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 47, Short.MAX_VALUE)
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 173, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(5, 5, 5))
             .addGroup(operationsPanelLayout.createSequentialGroup()
                 .addGap(24, 24, 24)
                 .addGroup(operationsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(addingPointBox)
-                    .addComponent(addingEdgeBox, javax.swing.GroupLayout.PREFERRED_SIZE, 233, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(crossingPointsButton, javax.swing.GroupLayout.PREFERRED_SIZE, 144, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addGroup(operationsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                        .addGroup(javax.swing.GroupLayout.Alignment.LEADING, operationsPanelLayout.createSequentialGroup()
-                            .addComponent(convexHullButton, javax.swing.GroupLayout.PREFERRED_SIZE, 144, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(triangleAreaButton, javax.swing.GroupLayout.PREFERRED_SIZE, 124, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addGroup(operationsPanelLayout.createSequentialGroup()
-                            .addComponent(randomPointsButton, javax.swing.GroupLayout.PREFERRED_SIZE, 141, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 124, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addGroup(operationsPanelLayout.createSequentialGroup()
-                            .addGap(176, 176, 176)
-                            .addComponent(avaliableLabel))))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addGroup(operationsPanelLayout.createSequentialGroup()
+                        .addGap(176, 176, 176)
+                        .addComponent(avaliableLabel)
+                        .addGap(0, 0, Short.MAX_VALUE))
+                    .addGroup(operationsPanelLayout.createSequentialGroup()
+                        .addGroup(operationsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(addingPointBox)
+                            .addComponent(addingEdgeBox, javax.swing.GroupLayout.PREFERRED_SIZE, 233, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(clearAllButton, javax.swing.GroupLayout.PREFERRED_SIZE, 90, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, operationsPanelLayout.createSequentialGroup()
+                        .addGroup(operationsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addGroup(javax.swing.GroupLayout.Alignment.LEADING, operationsPanelLayout.createSequentialGroup()
+                                .addComponent(randomPointsButton, javax.swing.GroupLayout.PREFERRED_SIZE, 141, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(0, 0, Short.MAX_VALUE))
+                            .addGroup(operationsPanelLayout.createSequentialGroup()
+                                .addGroup(operationsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(convexHullButton, javax.swing.GroupLayout.PREFERRED_SIZE, 144, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(crossingPointsButton, javax.swing.GroupLayout.PREFERRED_SIZE, 144, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addGap(6, 6, Short.MAX_VALUE)
+                                .addGroup(operationsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                    .addComponent(lineEquationButton)
+                                    .addComponent(triangleAreaButton))))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 120, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(18, 18, 18)))
+                .addContainerGap(20, Short.MAX_VALUE))
             .addGroup(operationsPanelLayout.createSequentialGroup()
                 .addGap(124, 124, 124)
                 .addComponent(jLabel1)
@@ -198,24 +260,36 @@ int rowWithSelectedPolygon = -1;  //Zmienna pomocnicza - odpowiedzialna za pobra
         operationsPanelLayout.setVerticalGroup(
             operationsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(operationsPanelLayout.createSequentialGroup()
-                .addGap(19, 19, 19)
-                .addComponent(polygonsLabel)
-                .addGap(10, 10, 10)
                 .addGroup(operationsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jLabel1, javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(jLabel2))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addGroup(operationsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 148, Short.MAX_VALUE)
-                    .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 30, Short.MAX_VALUE)
-                .addComponent(avaliableLabel)
-                .addGap(18, 18, 18)
-                .addComponent(addingPointBox)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(addingEdgeBox)
-                .addGap(18, 18, 18)
-                .addComponent(crossingPointsButton, javax.swing.GroupLayout.PREFERRED_SIZE, 61, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addGroup(operationsPanelLayout.createSequentialGroup()
+                        .addGap(19, 19, 19)
+                        .addComponent(polygonsLabel)
+                        .addGap(10, 10, 10)
+                        .addGroup(operationsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jLabel1, javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addComponent(jLabel2))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addGroup(operationsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 148, Short.MAX_VALUE)
+                            .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 41, Short.MAX_VALUE)
+                        .addComponent(avaliableLabel)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(operationsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(operationsPanelLayout.createSequentialGroup()
+                                .addComponent(addingPointBox)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                .addComponent(addingEdgeBox))
+                            .addGroup(operationsPanelLayout.createSequentialGroup()
+                                .addGap(8, 8, 8)
+                                .addComponent(clearAllButton, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addGap(18, 23, Short.MAX_VALUE)
+                        .addGroup(operationsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addComponent(lineEquationButton, javax.swing.GroupLayout.DEFAULT_SIZE, 61, Short.MAX_VALUE)
+                            .addComponent(crossingPointsButton, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)))
+                    .addGroup(operationsPanelLayout.createSequentialGroup()
+                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 61, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addGap(18, 18, 18)
                 .addGroup(operationsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, operationsPanelLayout.createSequentialGroup()
@@ -224,8 +298,7 @@ int rowWithSelectedPolygon = -1;  //Zmienna pomocnicza - odpowiedzialna za pobra
                         .addComponent(randomPointsButton, javax.swing.GroupLayout.PREFERRED_SIZE, 61, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, operationsPanelLayout.createSequentialGroup()
                         .addComponent(triangleAreaButton, javax.swing.GroupLayout.PREFERRED_SIZE, 61, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 61, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addGap(72, 72, 72)))
                 .addGap(39, 39, 39))
         );
 
@@ -342,7 +415,7 @@ int rowWithSelectedPolygon = -1;  //Zmienna pomocnicza - odpowiedzialna za pobra
                     if (endEdgePoint !=null && endEdgePoint != startEdgePoint){ //Jak jest koniec to poczatek rowniez musi byc wiec mozna utworzyc krawedz i koniec nie moze byc taki sam jak poczatek
                         Edge edgeTmp = new Edge(startEdgePoint, endEdgePoint);
                         sct.edges.add(edgeTmp);
-                        System.out.println("Linia dodana");
+                        //System.out.println("Linia dodana");
                         graphPanel.repaint(); //refresh
                         clickCounter = 0; //reset parametrow
                         startEdgePoint = null;
@@ -375,6 +448,66 @@ int rowWithSelectedPolygon = -1;  //Zmienna pomocnicza - odpowiedzialna za pobra
         graphPanel.repaint(); //Czyzczenie ekranu
         sct.convexHullResult = sct.algorithms.convexHull(sct.points); //Wyznaczanie otoczki wypuklej na zbiorze punktow
     }//GEN-LAST:event_convexHullButtonActionPerformed
+
+    private void lineEquationButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_lineEquationButtonActionPerformed
+      
+        //Wyznaczanie rownania linii na podstawie wybranej z tabeli sposrod juz istniejacych a nastepnie wypisanie rownania w optionPane
+        //Jesli nie wybrano zadnej lini to nie da sie obliczyc jej rownania
+        if (selectedLines.length == 0)
+            JOptionPane.showMessageDialog(null, "Nie wybrano jeszcze żadnej linii !", "Błąd", JOptionPane.INFORMATION_MESSAGE);
+        else if (selectedLines.length == 1){
+            //Jesli wybrano istniejaca linie z tabeli to mozna obliczyc jej rownanie
+            //Tworzona jest linia tymczasowa, do ktorej przypisywana jest linia pobrana z listy na podstawie numeru w tabeli (zawsze jest ten sam co w oryginalnej liscie)
+            //Mozna by skrocic kod, ale tak jest bardziej czytelnie chociaz mniej optymalnie (nie potrzebna dodatkowa zmienna eTMP)
+            Edge eTmp = sct.edges.get(linesTable.convertRowIndexToModel(selectedLines[0]));
+            String lineEquation = sct.algorithms.lineEquation(eTmp);
+            JOptionPane.showMessageDialog(null, "Rownanie prostej: "+lineEquation, "Rownanie linii", JOptionPane.INFORMATION_MESSAGE);
+        }
+        else
+            JOptionPane.showMessageDialog(null, "Wybrano wiecej niz jedna linie !", "Błąd", JOptionPane.INFORMATION_MESSAGE);
+    }//GEN-LAST:event_lineEquationButtonActionPerformed
+
+    private void crossingPointsButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_crossingPointsButtonActionPerformed
+        //Wyznaczanie punktu przeciecia dwoch lini na podstawie dwoch lini wybranych z tabeli sposrod juz istniejacych a nastepnie wypisanie punktu w optionPane
+        if (selectedLines.length == 2){
+            //Jesli wybrano dwie istniejace linie z tabeli to mozna obliczyc ich punkt przeciecia
+            Edge e1Tmp = sct.edges.get(linesTable.convertRowIndexToModel(selectedLines[0]));
+            Edge e2Tmp = sct.edges.get(linesTable.convertRowIndexToModel(selectedLines[1]));
+            Point resultPoint = sct.algorithms.crossingPointCramerMod(e1Tmp, e2Tmp); //Obliczenia
+            JOptionPane.showMessageDialog(null, "Punkt przeciecia wybranych lini to:\n("+resultPoint.x+","+resultPoint.y+")", "Punkt przeciecia", JOptionPane.INFORMATION_MESSAGE);           
+        }
+        else 
+            JOptionPane.showMessageDialog(null, "Wybrano niepoprawną ilosc linii !", "Błąd", JOptionPane.INFORMATION_MESSAGE); 
+    }//GEN-LAST:event_crossingPointsButtonActionPerformed
+
+    private void clearAllButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_clearAllButtonActionPerformed
+        //Czyszczenie wszystkich wprowadzonych danych
+        sct.edges.clear();
+        sct.points.clear();
+        resetPointsTable();
+        resetLinesTable();
+        graphPanel.repaint();
+    }//GEN-LAST:event_clearAllButtonActionPerformed
+
+    private void triangleAreaButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_triangleAreaButtonActionPerformed
+       
+        //Obliczanie pola trojkata zlozonego z trzech podanych punktow,bedacych wierzcholkami, na podstawie 3 punktow wybranych z tabeli sposrod juz istniejacych
+        //Wraz ze sprawdzeniem czy z wybranych punktow da sie zbudowac trojkat i wypisanie wyniku obliczen w optionPane
+        if (selectedPoints.length == 3){
+            Point p1 = sct.points.get(pointsTable.convertRowIndexToModel(selectedPoints[0]));
+            Point p2 = sct.points.get(pointsTable.convertRowIndexToModel(selectedPoints[1]));
+            Point p3 = sct.points.get(pointsTable.convertRowIndexToModel(selectedPoints[2]));
+            
+            if(sct.algorithms.isTrianglePossible(p1, p2, p3)){
+                double calculatedArea = sct.algorithms.areaOfTriangle(p1, p2, p3);
+                JOptionPane.showMessageDialog(null, "Pole wybranego trojkata wynosi:\n"+calculatedArea, "Pole trojkata", JOptionPane.INFORMATION_MESSAGE); 
+            }
+            else
+                JOptionPane.showMessageDialog(null, "Z podanych wierzcholkow nie mozna zbudowac trojkata", "Błąd", JOptionPane.INFORMATION_MESSAGE);               
+        }
+        else
+            JOptionPane.showMessageDialog(null, "Wybrano niepoprawną ilość punktów !", "Błąd", JOptionPane.INFORMATION_MESSAGE); 
+    }//GEN-LAST:event_triangleAreaButtonActionPerformed
 
     
     /**
@@ -421,6 +554,7 @@ int rowWithSelectedPolygon = -1;  //Zmienna pomocnicza - odpowiedzialna za pobra
     private javax.swing.JCheckBox addingEdgeBox;
     private javax.swing.JCheckBox addingPointBox;
     private javax.swing.JLabel avaliableLabel;
+    private javax.swing.JButton clearAllButton;
     private javax.swing.JButton convexHullButton;
     private javax.swing.JButton crossingPointsButton;
     private javax.swing.JPanel graphPanel;
@@ -430,6 +564,7 @@ int rowWithSelectedPolygon = -1;  //Zmienna pomocnicza - odpowiedzialna za pobra
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JSplitPane jSplitPane1;
+    private javax.swing.JButton lineEquationButton;
     public static javax.swing.JTable linesTable;
     private javax.swing.JPanel operationsPanel;
     public javax.swing.JTable pointsTable;

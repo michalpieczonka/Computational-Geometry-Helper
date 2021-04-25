@@ -14,6 +14,7 @@ public class graphPanell extends JPanel{
     StructuresContainer sct;
     private String cords;//Zmienna do wypisywania wspolrzednych punktow w formie tekstu
     private Color pointColor = new Color(60,63,65 );
+    private Color convexHullColor = new Color(255,0,0);
     private int pointBold = 11;// Grubosc punktu
     private final Font defaultFont = new Font("Serif",Font.ITALIC,12); //Domyslna czcionka
     private final Font boldedFont = new Font("default", Font.BOLD, 12); // Czcionka pogrubiona
@@ -34,25 +35,36 @@ public class graphPanell extends JPanel{
           if (sct.convexHullEnabled == true){
               Point prev = null; //Punkt pomocniczy, potrzebny do rysowania lini, poczatkowo jest nullem, a potem przy kazdej iteracji
                                 //przez liste punktow stanowiacych otoczke wypukla jest ustawiany na ten juz "przeiterowany".
-              Point firstPoint = sct.convexHullResult.get(0); //Pomocniczy punkt, bedzie
+              Point firstPoint = sct.convexHullResult.get(0); //Pomocniczy punkt, bedzie potrzebny pozniej
+              
+              
                     for (Point p: sct.convexHullResult){
+                        
+                    g2d.setStroke(boldedLine);                        
+                    g2d.setColor(pointColor);
                     cords = "("+p.x+" , "+p.y+")";
                     g2d.drawString(cords, p.x, p.y-12); //Opis punktu (x,y)
                     g2d.drawLine(p.x, p.y, p.x, p.y);  //narysowanie punktow
+                    
                     if (prev !=null){ //Jesli nie jest to pierwsza iteracja to:
+                        g2d.setColor(convexHullColor);
                         g2d.drawLine(prev.x, prev.y, p.x, p.y);
                     }
+                    
                     prev = p;   //Ustawienie aktualnego poprzednika do nastepnej iteracji                 
                   }
+                    
                 g2d.drawLine(firstPoint.x,firstPoint.y,prev.x,prev.y); //Dorysowanie brakujacej lini pomiedzy punktem poczatkowym, a punktem ostatnim
                 sct.setConvexHullDisabled(); //Wylaczenie otoczki wypuklej po narysowaniu aby umozliwic "rysowanie" kolejnych punktow
                 }
+          
           else{
                //Rysowanie pojedynczych punktow na przestrzeni wizualizacyjnej (graphPanelu)
                 for(Point p: sct.points ){
                     cords = "("+p.x+" , "+p.y+")";
                     g2d.drawString(cords, p.x, p.y-12); //Opis punktu (x,y)
-                    g2d.drawLine(p.x, p.y, p.x, p.y); 
+                    //g2d.drawLine(p.x, p.y, p.x, p.y); 
+                    g2d.fillOval(p.x, p.y, 4, 4);
                    // g2d.fillOval(p.x, p.y, pointBold, pointBold); //Zamiast wykorzystywac drawLine do rysowania punktu wykorzystuje fillOval - tylko po to,aby punkt byl lepiej widoczny 
                 }
                 g2d.setFont(defaultFont);
