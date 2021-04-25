@@ -7,16 +7,19 @@ import java.util.List;
 import java.util.Random;
 
 public class Algorithms {
-    int maxRange = 580;
-    int minRange = 10;
+    int maxXRange = 580;
+    int minXRange = 10;
+    int maxYRange = 490;
+    int minYRange = 10;
     
+    //Losowanie wspolrzednych dla losowych punktow
     Point[] generateRandomPoints(int numberOfPoints){
         Random r = new Random();
         Point[] generatedPoints = new Point[numberOfPoints];
         for (int i=0; i<numberOfPoints; i++){
            Point pTmp = new Point();
-           pTmp.x = r.nextInt(maxRange - minRange)  + minRange;
-           pTmp.y = r.nextInt(maxRange - minRange)  + minRange;
+           pTmp.x = r.nextInt(maxXRange - minXRange)  + minXRange;
+           pTmp.y = r.nextInt(maxYRange - minYRange)  + minYRange;
            generatedPoints[i] = pTmp;
         }
         return generatedPoints;
@@ -148,4 +151,23 @@ public class Algorithms {
            
            return possible;
        }
+       
+       
+      //Metoda sprawdzajaca po ktorej stronie podanej lini znajduje sie podany punkt
+      //Metoda zwraca stringa, ktory zostanie pozniej wypisany w optionPane
+     String whichSide(Edge l1, Point p3){
+        String result = "";
+        int checker = (l1.vertices[1].y - l1.vertices[0].y)*p3.x + (l1.vertices[0].x-l1.vertices[1].x)*p3.y + (l1.vertices[1].x*l1.vertices[0].y - l1.vertices[0].x*l1.vertices[1].y);
+        if (checker < 0 )
+            result = "Punkt ("+p3.x+","+p3.y+") znajduje sie z prawej strony prostej";
+        else if ( checker > 0)
+            result = "Punkt ("+p3.x+","+p3.y+") znajduje sie z lewej strony prostej";
+        else
+            result = "Punkt ("+p3.x+","+p3.y+") znajduje sie na prostej";
+        
+        return result;
+    }
+
+       
+       
 }

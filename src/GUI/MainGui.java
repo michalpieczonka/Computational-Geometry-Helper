@@ -67,13 +67,16 @@ int []selectedPoints; //Zmienna pomocnicza - odpowiedzialna za pobranie wyboru z
         convexHullButton = new javax.swing.JButton();
         randomPointsButton = new javax.swing.JButton();
         triangleAreaButton = new javax.swing.JButton();
-        jButton1 = new javax.swing.JButton();
+        refreshButton = new javax.swing.JButton();
         jLabel1 = new javax.swing.JLabel();
         jScrollPane2 = new javax.swing.JScrollPane();
         linesTable = new javax.swing.JTable();
         jLabel2 = new javax.swing.JLabel();
         lineEquationButton = new javax.swing.JButton();
         clearAllButton = new javax.swing.JButton();
+        kdTreeButton = new javax.swing.JButton();
+        pointToLineButton = new javax.swing.JButton();
+        jButton1 = new javax.swing.JButton();
         rPanel = new javax.swing.JPanel();
         graphPanel = paintSurface;
         wizualizacjaL = new javax.swing.JLabel();
@@ -152,11 +155,11 @@ int []selectedPoints; //Zmienna pomocnicza - odpowiedzialna za pobranie wyboru z
             }
         });
 
-        jButton1.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
-        jButton1.setText("Odśwież ekran");
-        jButton1.addActionListener(new java.awt.event.ActionListener() {
+        refreshButton.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
+        refreshButton.setText("Odśwież ekran");
+        refreshButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton1ActionPerformed(evt);
+                refreshButtonActionPerformed(evt);
             }
         });
 
@@ -206,6 +209,25 @@ int []selectedPoints; //Zmienna pomocnicza - odpowiedzialna za pobranie wyboru z
             }
         });
 
+        kdTreeButton.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
+        kdTreeButton.setText("<html><center>Znajdz najblizszy<br />punkt do wybranego <br /> (Drzewa KD)</center></html>");
+        kdTreeButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                kdTreeButtonActionPerformed(evt);
+            }
+        });
+
+        pointToLineButton.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
+        pointToLineButton.setText("<html><center>Wyznacz polozenie<br />wybranego punktu <br /> wzgledem wybranej linii</center></html>");
+        pointToLineButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                pointToLineButtonActionPerformed(evt);
+            }
+        });
+
+        jButton1.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
+        jButton1.setText("<html><center>Wyznacz polozenie<br />wybranego punktu <br /> wzgledem wybranego wielokata</center></html>");
+
         javax.swing.GroupLayout operationsPanelLayout = new javax.swing.GroupLayout(operationsPanel);
         operationsPanel.setLayout(operationsPanelLayout);
         operationsPanelLayout.setHorizontalGroup(
@@ -215,64 +237,74 @@ int []selectedPoints; //Zmienna pomocnicza - odpowiedzialna za pobranie wyboru z
                 .addComponent(polygonsLabel)
                 .addGap(132, 132, 132))
             .addGroup(operationsPanelLayout.createSequentialGroup()
-                .addGap(10, 10, 10)
-                .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 264, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 47, Short.MAX_VALUE)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 173, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(5, 5, 5))
-            .addGroup(operationsPanelLayout.createSequentialGroup()
-                .addGap(24, 24, 24)
-                .addGroup(operationsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(operationsPanelLayout.createSequentialGroup()
-                        .addGap(176, 176, 176)
-                        .addComponent(avaliableLabel)
-                        .addGap(0, 0, Short.MAX_VALUE))
-                    .addGroup(operationsPanelLayout.createSequentialGroup()
-                        .addGroup(operationsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(addingPointBox)
-                            .addComponent(addingEdgeBox, javax.swing.GroupLayout.PREFERRED_SIZE, 233, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(clearAllButton, javax.swing.GroupLayout.PREFERRED_SIZE, 90, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, operationsPanelLayout.createSequentialGroup()
-                        .addGroup(operationsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                            .addGroup(javax.swing.GroupLayout.Alignment.LEADING, operationsPanelLayout.createSequentialGroup()
-                                .addComponent(randomPointsButton, javax.swing.GroupLayout.PREFERRED_SIZE, 141, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(0, 0, Short.MAX_VALUE))
-                            .addGroup(operationsPanelLayout.createSequentialGroup()
-                                .addGroup(operationsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(convexHullButton, javax.swing.GroupLayout.PREFERRED_SIZE, 144, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addComponent(crossingPointsButton, javax.swing.GroupLayout.PREFERRED_SIZE, 144, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                .addGap(6, 6, Short.MAX_VALUE)
-                                .addGroup(operationsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                                    .addComponent(lineEquationButton)
-                                    .addComponent(triangleAreaButton))))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 120, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(18, 18, 18)))
-                .addContainerGap(20, Short.MAX_VALUE))
-            .addGroup(operationsPanelLayout.createSequentialGroup()
                 .addGap(124, 124, 124)
                 .addComponent(jLabel1)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(jLabel2)
-                .addGap(73, 73, 73))
+                .addGap(113, 113, 113))
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, operationsPanelLayout.createSequentialGroup()
+                .addGap(12, 12, 12)
+                .addGroup(operationsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, operationsPanelLayout.createSequentialGroup()
+                        .addGroup(operationsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(operationsPanelLayout.createSequentialGroup()
+                                .addComponent(convexHullButton, javax.swing.GroupLayout.PREFERRED_SIZE, 144, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                            .addGroup(operationsPanelLayout.createSequentialGroup()
+                                .addGroup(operationsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, operationsPanelLayout.createSequentialGroup()
+                                        .addGap(0, 0, Short.MAX_VALUE)
+                                        .addComponent(crossingPointsButton, javax.swing.GroupLayout.PREFERRED_SIZE, 144, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                    .addGroup(operationsPanelLayout.createSequentialGroup()
+                                        .addComponent(randomPointsButton, javax.swing.GroupLayout.PREFERRED_SIZE, 144, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addGap(0, 0, Short.MAX_VALUE)))
+                                .addGap(18, 18, 18)))
+                        .addGroup(operationsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                            .addComponent(kdTreeButton)
+                            .addComponent(lineEquationButton, javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(triangleAreaButton, javax.swing.GroupLayout.Alignment.LEADING))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addGroup(operationsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addComponent(refreshButton, javax.swing.GroupLayout.DEFAULT_SIZE, 155, Short.MAX_VALUE)
+                            .addComponent(pointToLineButton, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
+                            .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE))
+                        .addGap(12, 12, 12))
+                    .addGroup(operationsPanelLayout.createSequentialGroup()
+                        .addGap(188, 188, 188)
+                        .addComponent(avaliableLabel)
+                        .addGap(0, 0, Short.MAX_VALUE))
+                    .addGroup(operationsPanelLayout.createSequentialGroup()
+                        .addGap(12, 12, 12)
+                        .addGroup(operationsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(addingPointBox)
+                            .addComponent(addingEdgeBox, javax.swing.GroupLayout.PREFERRED_SIZE, 233, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(clearAllButton, javax.swing.GroupLayout.PREFERRED_SIZE, 91, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(21, 21, 21)))
+                .addGap(20, 20, 20))
+            .addGroup(operationsPanelLayout.createSequentialGroup()
+                .addGap(10, 10, 10)
+                .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 264, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(18, 18, 18)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
+                .addGap(32, 32, 32))
         );
         operationsPanelLayout.setVerticalGroup(
             operationsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(operationsPanelLayout.createSequentialGroup()
+                .addGap(19, 19, 19)
+                .addComponent(polygonsLabel)
+                .addGap(10, 10, 10)
+                .addGroup(operationsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel1)
+                    .addComponent(jLabel2))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(operationsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 148, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 148, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addGroup(operationsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(operationsPanelLayout.createSequentialGroup()
-                        .addGap(19, 19, 19)
-                        .addComponent(polygonsLabel)
-                        .addGap(10, 10, 10)
-                        .addGroup(operationsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jLabel1, javax.swing.GroupLayout.Alignment.TRAILING)
-                            .addComponent(jLabel2))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addGroup(operationsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 148, Short.MAX_VALUE)
-                            .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 41, Short.MAX_VALUE)
                         .addComponent(avaliableLabel)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(operationsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -283,22 +315,27 @@ int []selectedPoints; //Zmienna pomocnicza - odpowiedzialna za pobranie wyboru z
                             .addGroup(operationsPanelLayout.createSequentialGroup()
                                 .addGap(8, 8, 8)
                                 .addComponent(clearAllButton, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                        .addGap(18, 23, Short.MAX_VALUE)
+                        .addGap(18, 18, Short.MAX_VALUE)
                         .addGroup(operationsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                             .addComponent(lineEquationButton, javax.swing.GroupLayout.DEFAULT_SIZE, 61, Short.MAX_VALUE)
                             .addComponent(crossingPointsButton, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)))
-                    .addGroup(operationsPanelLayout.createSequentialGroup()
-                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 61, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, operationsPanelLayout.createSequentialGroup()
+                        .addGap(132, 132, 132)
+                        .addComponent(refreshButton, javax.swing.GroupLayout.PREFERRED_SIZE, 61, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addGap(18, 18, 18)
                 .addGroup(operationsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, operationsPanelLayout.createSequentialGroup()
                         .addComponent(convexHullButton, javax.swing.GroupLayout.PREFERRED_SIZE, 61, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(randomPointsButton, javax.swing.GroupLayout.PREFERRED_SIZE, 61, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED))
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, operationsPanelLayout.createSequentialGroup()
-                        .addComponent(triangleAreaButton, javax.swing.GroupLayout.PREFERRED_SIZE, 61, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(72, 72, 72)))
+                        .addGroup(operationsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addComponent(triangleAreaButton, javax.swing.GroupLayout.PREFERRED_SIZE, 61, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(pointToLineButton, javax.swing.GroupLayout.PREFERRED_SIZE, 61, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGap(11, 11, 11)))
+                .addGroup(operationsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(randomPointsButton, javax.swing.GroupLayout.DEFAULT_SIZE, 61, Short.MAX_VALUE)
+                    .addComponent(kdTreeButton, javax.swing.GroupLayout.DEFAULT_SIZE, 61, Short.MAX_VALUE)
+                    .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE))
                 .addGap(39, 39, 39))
         );
 
@@ -336,7 +373,7 @@ int []selectedPoints; //Zmienna pomocnicza - odpowiedzialna za pobranie wyboru z
         rPanelLayout.setHorizontalGroup(
             rPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(rPanelLayout.createSequentialGroup()
-                .addContainerGap(164, Short.MAX_VALUE)
+                .addContainerGap(39, Short.MAX_VALUE)
                 .addGroup(rPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, rPanelLayout.createSequentialGroup()
                         .addComponent(wizualizacjaL, javax.swing.GroupLayout.PREFERRED_SIZE, 175, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -361,7 +398,7 @@ int []selectedPoints; //Zmienna pomocnicza - odpowiedzialna za pobranie wyboru z
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jSplitPane1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 1182, Short.MAX_VALUE)
+            .addComponent(jSplitPane1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 1184, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -371,10 +408,10 @@ int []selectedPoints; //Zmienna pomocnicza - odpowiedzialna za pobranie wyboru z
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+    private void refreshButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_refreshButtonActionPerformed
     graphPanel.repaint();           
            
-    }//GEN-LAST:event_jButton1ActionPerformed
+    }//GEN-LAST:event_refreshButtonActionPerformed
 
     private void randomPointsButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_randomPointsButtonActionPerformed
         Point[] randomPoints = sct.algorithms.generateRandomPoints(10);
@@ -509,6 +546,35 @@ int []selectedPoints; //Zmienna pomocnicza - odpowiedzialna za pobranie wyboru z
             JOptionPane.showMessageDialog(null, "Wybrano niepoprawną ilość punktów !", "Błąd", JOptionPane.INFORMATION_MESSAGE); 
     }//GEN-LAST:event_triangleAreaButtonActionPerformed
 
+    private void kdTreeButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_kdTreeButtonActionPerformed
+       //Budowanie drzewa KD i wyszukiwanie w nim najblizszego sasiada do wybranego punktu
+        if (selectedPoints.length == 1){
+            Point p1 = sct.points.get(pointsTable.convertRowIndexToModel(selectedPoints[0]));
+            sct.enableAndBuildKdTREE(p1);          
+            double [] foundedPoint;
+            foundedPoint = sct.findClosestPointInKdTree(p1);          
+            System.out.println(foundedPoint[0]+ " "+ foundedPoint[1]);          
+            System.out.println(sct.closestPoints.get(1));           
+            graphPanel.repaint();
+           // sct.isKdTreeEnabled = false;
+        }
+        else
+           JOptionPane.showMessageDialog(null, "Wybrano niepoprawną ilość punktów !", "Błąd", JOptionPane.INFORMATION_MESSAGE); 
+    }//GEN-LAST:event_kdTreeButtonActionPerformed
+
+    private void pointToLineButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_pointToLineButtonActionPerformed
+        //Sprawdzenie po ktorej stronie wybranej linii znajduje sie wybrany punkt
+        //Metoda uruchomi sie tylko gdy z tabeli wybrana jest jedna linia i jeden punkt
+        if (selectedPoints.length == 1 && selectedLines.length == 1){
+            Point p1 = sct.points.get(pointsTable.convertRowIndexToModel(selectedPoints[0]));
+            Edge e1 = sct.edges.get(linesTable.convertRowIndexToModel(selectedLines[0]));
+            String result = sct.algorithms.whichSide(e1, p1);
+            JOptionPane.showMessageDialog(null, result , "Polozenie punktu wzgledem linii", JOptionPane.INFORMATION_MESSAGE); 
+        }
+        else
+            JOptionPane.showMessageDialog(null, "Wybrano niepoprawna ilosc danych" , "Błąd", JOptionPane.INFORMATION_MESSAGE);
+    }//GEN-LAST:event_pointToLineButtonActionPerformed
+
     
     /**
      * @param args the command line arguments
@@ -564,13 +630,16 @@ int []selectedPoints; //Zmienna pomocnicza - odpowiedzialna za pobranie wyboru z
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JSplitPane jSplitPane1;
+    private javax.swing.JButton kdTreeButton;
     private javax.swing.JButton lineEquationButton;
     public static javax.swing.JTable linesTable;
     private javax.swing.JPanel operationsPanel;
+    private javax.swing.JButton pointToLineButton;
     public javax.swing.JTable pointsTable;
     private javax.swing.JLabel polygonsLabel;
     javax.swing.JPanel rPanel;
     private javax.swing.JButton randomPointsButton;
+    private javax.swing.JButton refreshButton;
     private javax.swing.JButton triangleAreaButton;
     private javax.swing.JLabel wizualizacjaL;
     // End of variables declaration//GEN-END:variables

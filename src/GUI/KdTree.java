@@ -19,6 +19,7 @@ public class KdTree {
     public KdTree( List<Node> nodes) {
         root = makeTree(nodes, 0, nodes.size(), 0);
     }
+    
 
     //Znajdowanie najblizszego wezla , argumentem jest punkt o zadanych wspolzrednych
     //Jest to tak naprawde "podfunkcja" ktora wywoluje wlasciową funkcje szukajaca, ktora bedzie dzialala rekurencyjnie przez cale drzewo
@@ -32,12 +33,12 @@ public class KdTree {
         return nearestLeaf;
     }
 
-    //Getter odwiedzonych
+    //odwiedzone
     public int visited() {
         return visited;
     }
 
-    //Geter dystansu
+    //obliczanie dystansu
     public double distance() {
         return Math.sqrt(shortestDistance);
     }
@@ -50,16 +51,17 @@ public class KdTree {
         ++visited;
         double d = root.distance(target);
         //Jesli najblizszy lisc jest nulem lub obliczone d jest mniejsze niz aktualny najmniejszy dystans
-        if (nearestLeaf == null || d < shortestDistance) {
+        if (nearestLeaf == null || d < shortestDistance) {       
             shortestDistance = d; //Nowy najkrotszy dystans jest teraz d
             nearestLeaf = root; //Zmiana najblizszego liscia na wezel 'root' w danym wywolaniu
+
         }
-        if (shortestDistance == 0) //Jesli dystans jest 0 to wyjdz
+        if (shortestDistance == 0 ) //Jesli dystans jest 0 to wyjdz
             return;
         double dx = root.get(index) - target.get(index); //Obliczenie nastepnego podzialu
         index = (index + 1) % 2; //Podzial na pol
         nearest(dx > 0 ? root.left_ : root.right_, target, index); //Jesli obliczone dx jest wieksze niz 0 to przechodzimy szukac w lewym wezle jesli wieksze to w prawym
-        if (dx * dx >= shortestDistance) //Jesli
+        if (dx * dx >= shortestDistance ) //Jesli
             return;
         nearest(dx > 0 ? root.right_ : root.left_, target, index); //Jesli obliczone dx jest wieksze od 0 to przechodzimy szukac w prawym podrzewie inaczej w lewym
     }
@@ -91,7 +93,7 @@ public class KdTree {
 
     //Klasa reprezentujaca wezel
     public static class Node {
-         double[] Coords;
+        double[] Coords;
         private Node left_ = null; //Lewy wezel/galaz do lewego wezla
         private Node right_ = null; //Prawy wezel/galaz do prawego wezla
 

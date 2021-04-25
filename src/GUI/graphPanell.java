@@ -59,13 +59,26 @@ public class graphPanell extends JPanel{
                 }
           
           else{
+              //Jesli drzewoKD jest wlaczone to na obszarze rysowania pojawi sie tylko najblizszy punkt punktu wybranego
+              if(sct.isKdTreeEnabled){
+                  g2d.setColor(Color.RED);
+                for (Point p: sct.closestPoints){
+                    cords = "("+p.x+" , "+p.y+")";
+                    g2d.drawString(cords, p.x, p.y-12);
+                    g2d.fillOval(p.x, p.y, 4, 4);                    
+                }
+                 g2d.setStroke(boldedLine);
+                g2d.drawLine(sct.closestPoints.get(0).x,sct.closestPoints.get(0).y,sct.closestPoints.get(1).x,sct.closestPoints.get(1).y);
+                sct.isKdTreeEnabled = false;
+              }
+              else {
+                g2d.setColor(pointColor);
                //Rysowanie pojedynczych punktow na przestrzeni wizualizacyjnej (graphPanelu)
                 for(Point p: sct.points ){
                     cords = "("+p.x+" , "+p.y+")";
                     g2d.drawString(cords, p.x, p.y-12); //Opis punktu (x,y)
                     //g2d.drawLine(p.x, p.y, p.x, p.y); 
-                    g2d.fillOval(p.x, p.y, 4, 4);
-                   // g2d.fillOval(p.x, p.y, pointBold, pointBold); //Zamiast wykorzystywac drawLine do rysowania punktu wykorzystuje fillOval - tylko po to,aby punkt byl lepiej widoczny 
+                    g2d.fillOval(p.x, p.y, 4, 4); //Zamiast wykorzystywac drawLine do rysowania punktu wykorzystuje fillOval - tylko po to,aby punkt byl lepiej widoczny                  
                 }
                 g2d.setFont(defaultFont);
                 g2d.setStroke(boldedLine);
@@ -74,16 +87,14 @@ public class graphPanell extends JPanel{
                 for(Edge p: sct.edges ){                  
                     g2d.drawLine(p.getEdgeCords()[0].x, p.getEdgeCords()[0].y, p.getEdgeCords()[1].x, p.getEdgeCords()[1].y);
                 }
+              }
+                
+                
+  
           }
-
-                
-
-                
-               
+              
 	}
-        
-        
-        
+       
  }        
 
 
