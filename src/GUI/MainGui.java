@@ -9,8 +9,11 @@ import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.List;
 import javax.swing.ButtonGroup;
+import javax.swing.JComponent;
+import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JTable;
+import javax.swing.JTextField;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 import javax.swing.table.DefaultTableModel;
@@ -227,6 +230,11 @@ int []selectedPoints; //Zmienna pomocnicza - odpowiedzialna za pobranie wyboru z
 
         jButton1.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
         jButton1.setText("<html><center>Wyznacz polozenie<br />wybranego punktu <br /> wzgledem wybranego wielokata</center></html>");
+        jButton1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton1ActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout operationsPanelLayout = new javax.swing.GroupLayout(operationsPanel);
         operationsPanel.setLayout(operationsPanelLayout);
@@ -574,6 +582,39 @@ int []selectedPoints; //Zmienna pomocnicza - odpowiedzialna za pobranie wyboru z
         else
             JOptionPane.showMessageDialog(null, "Wybrano niepoprawna ilosc danych" , "Błąd", JOptionPane.INFORMATION_MESSAGE);
     }//GEN-LAST:event_pointToLineButtonActionPerformed
+
+    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+       // Sprawdzenie gdzie znajduje sie podany przez uzytkownika punkt, wzgledem punktow wybranych z tabeli
+       //Metoda uruchomi sie tylko gdy z tabeli wybranych jest co najmniej 3 punkty
+       if (selectedPoints.length >= 3){
+           //Utworzenie customowego optionPane, ktory pozwoli pobrac od uzytkownika wspolrzedne punktu, dla ktorego maja byc przeprowadzone obliczenia
+          JTextField xCord = new JTextField();
+          JTextField yCord = new JTextField();
+          final JComponent[] inputs = new JComponent[] {
+               new JLabel("Współrzędna X:"),
+                         xCord,
+               new JLabel("Współrzędna Y:"),
+                         yCord,
+           };
+           int result = JOptionPane.showConfirmDialog(null, inputs, "Wprowadz współrzędne punktu", JOptionPane.PLAIN_MESSAGE);
+        if (result == JOptionPane.OK_OPTION) {
+            //Jesli wszystko porzebieglo pomyslnie, wspolrzedne zostaly pobrane to program przystepuje do wykonania algorytmu
+       Point [] points = new Point [selectedPoints.length];
+       //Pobranie wybranych punktow z tabeli
+       for (int i=0; i<selectedPoints.length; i++){
+           points[i]  = sct.points.get(pointsTable.convertRowIndexToModel(selectedPoints[i]));
+       }
+       Point userPoint = new Point();
+       userPoint.x = Integer.parseInt(xCord.getText());
+       userPoint.y = Integer.parseInt(yCord.getText());
+       String resultCalculations = sct.algorithms.isInside(points, userPoint);
+       JOptionPane.showMessageDialog(null, resultCalculations , "Polozenie punktu wzgledem wielokata", JOptionPane.INFORMATION_MESSAGE); 
+       }
+       }      
+       else
+           JOptionPane.showMessageDialog(null, "Wybrano niepoprawna ilosc danych" , "Błąd", JOptionPane.INFORMATION_MESSAGE);  
+        
+    }//GEN-LAST:event_jButton1ActionPerformed
 
     
     /**

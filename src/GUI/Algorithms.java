@@ -168,6 +168,25 @@ public class Algorithms {
         return result;
     }
 
+      String isInside(Point[] polygon, Point pointToCheck){
+        int numberOfVertices = polygon.length-1;
+        String result = "";
+        int i,j;
+        boolean isInside = false;
+
+        for ( i=0, j= numberOfVertices-1; i < numberOfVertices; j = i++){
+            if ( ( (polygon[i].y > pointToCheck.y )  != (polygon[j].y > pointToCheck.y) ) &&
+                    (pointToCheck.x < (polygon[j].x - polygon[i].x)*(pointToCheck.y - polygon[i].y) / (polygon[j].y - polygon[i].y) + polygon[i].x) )
+            {
+                isInside = !isInside;
+            }
+        }
+        if (isInside == true)
+            result = "Punkt ("+pointToCheck.x+","+pointToCheck.y+") znajduje sie wewnątrz wybranego wielokąta";
+        else
+             result = "Punkt ("+pointToCheck.x+","+pointToCheck.y+") znajduje sie na zewnątrz wybranego wielokąta";
+        return result;
+    }
        
        
 }
