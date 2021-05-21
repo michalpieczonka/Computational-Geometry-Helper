@@ -41,5 +41,5 @@ List of working features:
 The project will not be developed due to outdated technology. However, a new version based on Java FX is planned.
 
 ## Appearance of application
-* [ConvexHull Algorithm](./images/convex-hull.png)
-* [The closest neighbor - KD Tree](./images/closest-neighbor.png)
+* [ConvexHull Algorithm](./images/Convex-Hull.png)
+* [The closest neighbor - KD Tree](./images/KD-Tree.png)
